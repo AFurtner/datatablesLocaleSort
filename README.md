@@ -1,10 +1,10 @@
-# datatablesLocaleSort
+# jQuery datatables Locale sort
 jQuery DataTables sort plugin for locale aware String sorts. Performance optimized for large static data sets. 
 Requires DataTables 1.10 or newer.
 
 In non english languages Javascript Array.sort using String.compare() gives false order,
-e.g in German correct sort order is: Arzt, Ärzte, Ast, Baum, Zeder
-in contrast to Arzt, Ast, Baum, Zeder, Ärzte as in English/ASCII string sort
+e.g in German correct sort order is: Arzt, Ã„rzte, Ast, Baum, Zeder
+in contrast to Arzt, Ast, Baum, Zeder, Ã„rzte as in English/ASCII string sort
 
 Since String.localeCompare is extremely expansive performance wise this uses the following approach:
 Pre sort all column fields using String.localeCompare (onyl when necessary) and then map each cell to the position in the ordered list and cache that.

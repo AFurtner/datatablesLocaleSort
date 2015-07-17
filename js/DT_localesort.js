@@ -62,8 +62,8 @@
 				var idxForSameContent = 0;
 
 				for (var i = 1; i< tmpMap.length; i++) {
-						if (tmpMap[i].data.toLowerCase() == tmpMap[i-1].data.toLowerCase()) {
-								// if elems equal, keep sort index equal to make multi column sort possible
+						if (tmpMap[i].data == tmpMap[i-1].data) {
+								// if elems equal, keep sort index equal to make multi column sort possible later
 								columnsSortOrderMap[col][ tmpMap[i].index ] = idxForSameContent;
 						} else {
 								// default
