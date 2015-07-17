@@ -1,22 +1,42 @@
 /**
- * DataTables sort plugin for locale aware String sorts.
- * In non english languages String compare gives false results,
+ * jQuery DataTables sort plugin
+ * Sorting Strings respecting locale.
+ * Performance optimized for large static data sets.
+ * Requires DataTables 1.10 or newer.
+ *
+ * In non english languages Javascript Array.sort using String.compare() gives false order,
  * e.g in German correct sort order is: Arzt, Ärzte, Ast, Baum, Zeder
  * in contrast to Arzt, Ast, Baum, Zeder, Ärzte as in English/ASCII string sort
- * DataTables 1.10 or newer.
  *
- * since String.localeCompare is extremely expansive performance wise this uses the following approach:
- * pre sort all column fields using String.localeCompare (when necessary) and then map each cells term to the position in the ordered list.
- * For sorting afterwards just return the position index (an integer).
- * The sorting can then take advantage of really fast integer comparison (even faster than ASCII string comparison).
- * the pre computed cache must be invalidated and rebuild whenever the underlying data changes (e.g. Rows added/removed). We don't check this, user has to invalidate here.
- * Thus this works good only for relativly static data.
- *
+ * Since String.localeCompare is extremely expansive performance wise this uses the following approach:
+ * Pre sort all column fields using String.localeCompare (onyl when necessary) and then map each cell to the position in the ordered list and cache that.
+ * Later DataTables.api().sort() just uses the position index (an integer).
+ * The sorting can then take advantage of much faster integer comparison (even faster than ASCII string comparison).
  * For large data sets this can be more than 100 times faster than the naive localeCompare approach.
  *
- * usage: in initialisation options set "sType": "string-locale-mapped-int", "sSortDataType":"string-locale-mapped-int"
- * for each column that shall benefit from  sorted with this plugin
+ * Please note that the cache must be invalidated and rebuild whenever the underlying
+ * data changes (e.g. Rows added/removed). The plugin does not check this, user has to invalidate here.
+ * Thus this will only be fast for relatively static data.
  *
+ *
+ * usage:
+ * drop in DT_localsort.js, include script in your html.
+ * In initialisation options set `"type": "string-locale-mapped-int"` and `"orderDataType":"string-locale-mapped-int"`
+ * for each column that shall benefit from  sorted with this plugin.
+ *
+ *  @name Locale (string) mapped int
+ *  @summary Sort respecting Locale, caches order, uses integer compare for sorting
+ *  @author [Andreas Furtner](https://github.com/AFurtner/)
+
+ *  @example
+ * $('#example').dataTable( {
+ *				 "columnDefs": [ {
+ *								 'searchable':true,
+ *								 "type": "string-locale-mapped-int",
+ *								 "orderDataType":"string-locale-mapped-int",
+ *								 "targets": [ 0, 1 ]
+ *				 } ]
+ * });
  * @author Andreas Furtner
  */
 (function(){
