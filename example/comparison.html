@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>DataTables Locale caching sort example</title>
+    <link rel="stylesheet" type="text/css" media="screen" href='https://cdn.datatables.net/1.10.7/css/jquery.dataTables.css'>
+</head>
+<body>
+
+<div class="container">
+	<section>
+		<h1>DataTables example <span>Locale respecting order (i.e. sort) cached</span></h1>
+        <p>
+            Full data (~80k records) not loaded yet for faster page load.
+            <button id="load">Load</button> full data now
+        </p>
+
+		<table id="table" class="display" cellspacing="0" width="100%">
+			<thead>
+				<tr>
+                    <th>locale mapped sort</th>
+                    <th>standard sort</th>
+                    <th>naive locale sort</th>
+                </tr>
+            </thead>
+            <tbody/>
+        </table>
+    </section>
+
+    <script type="text/javascript" language="javascript" src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
+    <script type="text/javascript" language="javascript" src='https://cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js'></script>
+    <script type="text/javascript" language="javascript" src='../js/DT_localesort.js'></script>
+
+    <!-- load german word list as a global JS array, in real apps an AJAX call would be preferred, but this does not work in Chrome for local tests -->
+    <script type="text/javascript" language="javascript" src='german.80k.js'></script>
+
+    <!-- table initialisation -->
+    <script type="text/javascript" language="javascript" src='comparison.js'></script>
+</div>
+
+</body>
+</html>
