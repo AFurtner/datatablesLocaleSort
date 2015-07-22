@@ -52,7 +52,7 @@
     "use strict";
 
     // invalidate lookup maps for all registered columns, will recalculate caches on next sort (normally executed on next draw())
-    $.fn.dataTable.Api.register( 'invalidateStringLocaleSortCache()', function () {
+    $.fn.dataTable.Api.register( 'invalidateStringLocaleMappedCache()', function () {
       this.iterator( 'table', function ( context ) {
         context.stringLocaleMapped.cache = [];
       } );
@@ -61,7 +61,7 @@
     } );
 
     // invalidate lookup maps for all registered columns
-    $.fn.dataTable.Api.register( 'recalcStringLocaleSortCache()', function () {
+    $.fn.dataTable.Api.register( 'recalcStringLocaleMappedCache()', function () {
       this.iterator( 'table', function ( context ) {
         context.stringLocaleMapped.cache = [];
         context.aoColumns.forEach( function(col, colIdx) {
@@ -80,8 +80,14 @@
       settings.stringLocaleMapped = {};
 
       var myOptions = settings.oInit.stringLocaleMapped;
+      var haveOptions = myOptions != undefined;
       // always set this option
-      settings.stringLocaleMapped.caseInsensitive = myOptions && myOptions.caseInsensitive === false ? false : true;
+      settings.stringLocaleMapped.caseInsensitive = haveOptions && myOptions.caseInsensitive === true;
+      if (haveOptions && myOptions.locale != undefined && typeof myOptions.locale === "string") {
+        settings.stringLocaleMapped.locale = myOptions.locale;
+      } else {
+        settings.stringLocaleMapped.locale = (navigator.language || navigator.browserLanguage).split('-')[0];
+      }
       settings.stringLocaleMapped.cache = [];
     }
 
@@ -97,39 +103,47 @@
     }
 
     /*
-     * fast sorting relies on this sorter which maps
+     * fast table sorting relies on this cache sorter which maps
      * column cell indexes to (locale respecting) sort positions once!
-     * So the expensive localeCompare is not done on each dataTable._fnSort()!
-     * That just uses much faster integer comparison afterwards, as long as caches are not invalidated
+     * So the expensive localeCompare is not done on each dataTable sort
+     * which uses much faster integer comparison afterwards, as long as caches are not invalidated
      */
     function buildStringLocaleMappedIntColumn(context, col, colData){
-      function onlyAscii(elem) {
-        for (var j = 0; j < elem.length; ++j) {
-          if ((0xFF80 & elem.charCodeAt(j)) != 0) {
-            return false;
-          }
+      function onlyAsciiChars(elem) {
+        for (var i = 0; i < elem.length; ++i) {
+          // true when 7Bit characters only,  not sure this works for all code points?!
+          if ((0xFF80 & elem.charCodeAt(i)) != 0) { return false; }
         }
         return true;
       }
 
 
+
       var tmpMap = colData.map(function (elem, i) {
-        var asciiOnly = onlyAscii(elem);
+        var asciiOnly = onlyAsciiChars(elem);
         return {
           "index":i,
-          "data": context.stringLocaleMapped.caseInsensitive ? (asciiOnly ?  elem.toLowerCase() : elem.toLocaleLowerCase()) : elem,
+          "data": context.stringLocaleMapped.caseInsensitive ? elem.toLowerCase() : elem,
           "isAscii" : asciiOnly
         }
       });
 
+      // note: at least in tested browsers Intl.Collator('de').compare always puts "aalähnlich" before "Aalangel" even with its caseFirst option is set to "upper"
+      var coll = Intl != undefined && Intl.Collator != undefined ?
+            new Intl.Collator(context.stringLocaleMapped.locale)
+          : { compare: function(x,y) { x.localeCompare(y); } };
 
-      // EXPENSIVE sort, we want to do this only once per column, and not
+      // EXPENSIVE sort, we want to use the locale compare only once per column, and not
       // in per DataTable.sort() (which internally uses Array.sort(): O(n*log(n)) for merge/quick sort)
       tmpMap.sort(function (x, y) {
-        return (x.isAscii && y.isAscii)
-            ? (x.data > y.data ? 1 : -1)
-            : x.data.localeCompare(y.data);
+
+        if (x.isAscii && y.isAscii) {
+          return x.data < y.data ? -1 : x.data > y.data ? 1 : 0;
+        } else {
+          return coll.compare(x.data, y.data);
+        }
       });
+
       context.stringLocaleMapped.cache[col]= new Array(tmpMap.length);
       var colToOrderPos = context.stringLocaleMapped.cache[col];
 
