@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>DataTables Locale caching sort example</title>
+    <link rel="stylesheet" type="text/css" media="screen" href='https://cdn.datatables.net/1.10.7/css/jquery.dataTables.css'>
+</head>
+<body>
+
+<div class="container">
+	<section>
+		<h1>DataTables example <span>Locale respecting ordering (sorting) cached</span></h1>
+
+		<table id="table" class="display" cellspacing="0" width="100%">
+			<thead>
+				<tr>
+                    <th>mapped sort german words</th>
+                </tr>
+            </thead>
+            <!-- no data here since we load a german word list via JavaScript -->
+            <tbody/>
+        </table>
+
+        <p>
+            <button id="load">Load / Switch to</button>  other data set (invalidate all row data)
+        </p>
+
+    </section>
+
+    <script type="text/javascript" language="javascript" src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
+    <!--<script type="text/javascript" language="javascript" src='jquery-1.7.2.min.js'></script>-->
+    <script type="text/javascript" language="javascript" src='https://cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js'></script>
+    <!--<script type="text/javascript" language="javascript" src='jquery.dataTables.1.10.7.js'></script>-->
+    <script type="text/javascript" language="javascript" src='../js/DT_localesort.js'></script>
+
+    <!-- load german word list as a global JS array, in real apps an AJAX call would be preferred, but this does not work in Chrome for local tests -->
+    <script type="text/javascript" language="javascript" src='german.1k.js'></script>
+    <!-- table initialisation -->
+    <script type="text/javascript" language="javascript" src='simple.js'></script>
+</div>
+
+</body>
+</html>
