@@ -47,10 +47,11 @@ jQuery(document).ready(function($) {
             tApi.rows.add(
                 combineColsToRows(shuffle(germanWords.slice()), shuffle(germanWords.slice()), shuffle(germanWords.slice()))
             );
-            germanWords = null; // not used after here, allow memory reuse (garbage collection) later
 
             tApi.draw(); // redraw
 
+            $(this).text('Reload data');
+            $(this).parent().prev().fadeOut();
         });
     }
 
