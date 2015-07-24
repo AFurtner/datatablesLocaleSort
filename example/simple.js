@@ -22,7 +22,7 @@ jQuery(document).ready(function($) {
 
             $table.api().clear() // clear stale data
                 .rows.add( usedDataSet)// load new data (will not reorder, filter, redraw the table)
-                .invalidateStringLocaleSortCache() // clear sort caches, will recalc on next redraw
+                .invalidateStringLocaleMappedCache() // clear sort caches, will recalc on next redraw
                 .draw(); // redraw
 
             // alternatively, after rows have changed, use
