@@ -53,16 +53,14 @@
 
     // invalidate lookup maps for all registered columns, will recalculate caches on next sort (normally executed on next draw())
     $.fn.dataTable.Api.register( 'invalidateStringLocaleMappedCache()', function () {
-      this.iterator( 'table', function ( context ) {
+      return this.iterator( 'table', function ( context ) {
         context.stringLocaleMapped.cache = [];
       } );
-
-      return this;
     } );
 
     // invalidate lookup maps for all registered columns
     $.fn.dataTable.Api.register( 'recalcStringLocaleMappedCache()', function () {
-      this.iterator( 'table', function ( context ) {
+      return this.iterator( 'table', function ( context ) {
         context.stringLocaleMapped.cache = [];
         context.aoColumns.forEach( function(col, colIdx) {
           if (col.bSortable && col.sSortDataType == "string-locale-mapped-int") {
@@ -70,8 +68,6 @@
           }
         });
       } );
-
-      return this;
     } );
 
 
